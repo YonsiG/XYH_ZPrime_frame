@@ -26,8 +26,14 @@ struct Photon {
         trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
         fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll();
-
-        genPartFlav_ = nt.Photon_genPartFlav()[idx_];
+        try
+        {
+            genPartFlav_ = nt.Photon_genPartFlav()[idx_];
+        }
+        catch(const std::exception& e)
+        {
+        }
+        
     }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }
