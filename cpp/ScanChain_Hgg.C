@@ -198,7 +198,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
   Float_t LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mass, LeadPhoton_mvaID;
   Bool_t LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
-  UChar_t LeadPhoton_genPartFlav, SubleadPhoton_genPartFlav;
+  Int_t LeadPhoton_genPartFlav, SubleadPhoton_genPartFlav;
   Float_t SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mass, SubleadPhoton_mvaID;
   Float_t Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
   Float_t LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_trkSumPtHollowConeDR03, LeadPhoton_chargedHadronIso, LeadPhoton_r9;
@@ -286,8 +286,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else year_out==0;
   
   if (isMC) {
-    tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/C");
-    tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/C");
+    tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/I");
+    tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/I");
     tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
     tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
     tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
@@ -480,8 +480,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       if (dijets[0].p4.M()<50) continue;
 
       if (isMC){
-        LeadPhoton_genPartFlav = selectedDiPhoton.leadPho.genPartFlav();
-        SubleadPhoton_genPartFlav = selectedDiPhoton.subleadPho.genPartFlav();
+        LeadPhoton_genPartFlav = int(selectedDiPhoton.leadPho.genPartFlav());
+        SubleadPhoton_genPartFlav = int(selectedDiPhoton.subleadPho.genPartFlav());
         TLorentzVector GenHiggs, GenX, GenY;
         GenParts genparts = getGenParts();
         vector<TLorentzVector> gen_child_xyh, gen_child_ygg, gen_child_hbb;
@@ -505,7 +505,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
             }
             if (genparts[igenpart].ishbb()) {
               GenHiggs = genparts[igenpart].mother_p4();
-              gen_child_hbb.push_back(genparts[igenpart].p4()); cout<<1<<endl;
+              gen_child_hbb.push_back(genparts[igenpart].p4());
               GenHiggs_pt = GenHiggs.Pt();
               GenHiggs_eta = GenHiggs.Eta();
               GenHiggs_phi = GenHiggs.Phi();
@@ -522,7 +522,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
           GenY_dR = gen_child_ygg[0].DeltaR(gen_child_ygg[1]);
         }
         if (!abs(GenHiggs_pt+999)<0.0001){
-          cout<<2<<endl;
           GenHiggs_dR = gen_child_hbb[0].DeltaR(gen_child_hbb[1]);
           if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {sort_GenPart = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = sort_GenPart;}
           GenBFromHiggs_1_pt = gen_child_hbb[0].Pt();
